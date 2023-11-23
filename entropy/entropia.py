@@ -4,79 +4,100 @@ import math
 
 
 def main(argv):
-    file = ''
-    entropy_type = ''
-    level = 0
+    file = '' # Ścieżka do pliku
+    entropy_type = '' # Typ entropii (znaków lub słów)
+    level = 0 # Rząd entropii
     opts, args = getopt.getopt(argv, "hf:t:n:")
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage:')
-            print('entropia.py -f <filename> -t <C|W> -n [number]')
-            print('Parameters:')
-            print('filename - file with text to be analyzed. Text should be in english alphabet.')
-            print('C - characters entropy. W - words entropy')
-            print('number - number of characters/words used in conditional entropy')
-            print('Parameter -n is optional.')
+            print('Stosowanie:')
+            print('entropia.py -f <nazwa_pliku> -t <C|W> -n [liczba]')
+            print('Parametry:')
+            print('nazwa_pliku - ścieżka do pliku zawierającego tekst do analizy')
+            print('C - entropia znaków. W - entropia słów')
+            print('liczba - rząd entropi warunkowej. 0 oznacza entropię niewarunkową')
             sys.exit()
         elif opt == '-f':
             file = arg
         elif opt == '-t':
             entropy_type = arg
             if entropy_type != 'C' and entropy_type != 'W':
-                print("Invalid it argument. Expected 'C' or 'W'")
+                print("Nieprawidłowa wartość argumentu -t. Oczekiwano 'C' lub 'W'")
                 sys.exit()
         elif opt == '-n':
             level = int(arg)
 
     content = open(file, 'r')
 
-    entropy(content.read(), entropy_type, level)
+    entropy(file, content.read(), entropy_type, level)
 
 
-def entropy(text, type, level):
+def entropy(file, text, type, level):
     # Tworzenie alfabetu
     alphabet = {}
     alphabet_secondary = {}
     if type == 'W':  # Entropia słów
         text = text.split() # Alfabet zamiast z liter składać się będzie ze słów
 
-    unique_elements = list(text)
-    for c in range(0, len(unique_elements)):
-        char = unique_elements[c]
-        if c + level < len(unique_elements):
+    elements = list(text) # Lista wszystkich znaków/słów tekstu
+    char_number = len(elements)  # Ilość wszystkich elementów
+    for c in range(0, char_number):
+        char = elements[c]
 
-            if level > 0: # Pomocniczy alfabet
-                if char in alphabet_secondary.keys():
-                    alphabet_secondary[char] += 1
-                else:
-                    alphabet_secondary[char] = 1
+        # Pomocniczy alfabet dla rzędów większych niż 0
+        if level > 0:
+            if char in alphabet_secondary.keys():
+                alphabet_secondary[char] += 1
+            else:
+                alphabet_secondary[char] = 1
 
+        if c + level < len(elements):
+
+            # Tworzenie elementu według rzędu
             for i in range(1, level + 1):
-                char += unique_elements[c+i]
+                char += ' ' + elements[c+i]
 
+            # Obliczanie ilości danego elementu
             if char in alphabet.keys():
                 alphabet[char] += 1
                 continue
             alphabet[char] = 1
 
-    print(str(alphabet))
-
     # Prawdopodobieństwo elementu / Prawdopodobieństwo wspólne
     probabilities = {}
-    for k in alphabet.keys():
-        probabilities[k] = alphabet[k] / len(text)
+    for key in alphabet.keys():
+        probabilities[key] = alphabet[key] / char_number
 
     # Prawdopodobieństwo warunkowe
-    #if level > 0:
-
+    probabilities_conditional = {}
+    if level > 0:
+        for key in alphabet.keys():
+            probabilities_conditional[key] = 1
+            l = 0
+            chars = key.split()
+            for char in chars:
+                probabilities_conditional[key] *= alphabet_secondary[char] / (char_number - l)
+                l += 1
 
     # Obliczanie entropii
     sum = 0
-    for k in probabilities.keys():
-        sum += probabilities[k] * math.log(probabilities[k], 2)
+    for key in probabilities.keys():
+        if level == 0:
+            sum += probabilities[key] * math.log(probabilities[key], 2)
+        else:
+            sum += probabilities[key] * math.log(probabilities_conditional[key], 2)
     sum *= -1
 
-    print('Entropy =', sum)
+    if level == 0:
+        if type == 'C':
+            print('Entropia znaków tekstu z pliku', file, '=', sum)
+        else:
+            print('Entropia słów tekstu z pliku', file, '=', sum)
+    else:
+        if type == 'C':
+            print('Entropia warunkowa znaków', level, 'stopnia tekstu z pliku', file, '=', sum)
+        else:
+            print('Entropia warunkowa słów', level, 'stopnia tekstu z pliku', file, '=', sum)
 
 
 if __name__ == "__main__":
