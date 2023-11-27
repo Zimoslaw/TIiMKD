@@ -5,17 +5,17 @@ import math
 
 
 def main(argv):
-    file = '' # Ścieżka do pliku
-    entropy_type = '' # Typ entropii (znaków lub słów)
-    level = 0 # Rząd entropii
+    file = ''  # Ścieżka do pliku
+    entropy_type = ''  # Typ entropii (znaków lub słów)
+    level = 0  # Rząd entropii
     opts, args = getopt.getopt(argv, "hf:t:n:")
     for opt, arg in opts:
         if opt == '-h':
             print('Stosowanie:')
-            print('entropia.py -f <nazwa_pliku> -t <C|W> -n [liczba]')
+            print('entropia.py -f <nazwa_pliku> -t <C|W> -n <liczba>')
             print('Parametry:')
             print('nazwa_pliku - ścieżka do pliku zawierającego tekst do analizy')
-            print('C - entropia znaków. W - entropia słów')
+            print('C - entropia znaków (characters). W - entropia słów (words)')
             print('liczba - rząd entropi warunkowej. 0 oznacza entropię niewarunkową')
             sys.exit()
         elif opt == '-f':
@@ -34,9 +34,8 @@ def main(argv):
 
 
 def entropy(file, text, entropy_type, level):
-
     if entropy_type == 'W':  # Entropia słów
-        text = text.split(" ") # Alfabet zamiast z liter składać się będzie ze słów
+        text = text.split(" ")  # Alfabet zamiast z liter składać się będzie ze słów
         text = tuple(text)
 
     if level == 0:
@@ -69,12 +68,13 @@ def entropy(file, text, entropy_type, level):
         if entropy_type == 'C':
             print('Entropia znakow tekstu z pliku', file, '=', total)
         else:
-            print('Entropia słow tekstu z pliku', file, '=', total)
+            print('Entropia slow tekstu z pliku', file, '=', total)
     else:
         if entropy_type == 'C':
             print('Entropia warunkowa znakow', level, 'rzedu tekstu z pliku', file, '=', total)
         else:
             print('Entropia warunkowa slow', level, 'rzedu tekstu z pliku', file, '=', total)
+
 
 # Prawdopdobieństwo każdego elemntu z zadanej tablicy
 def get_probability(array: list[str]):
@@ -86,6 +86,7 @@ def get_probability(array: list[str]):
         counter[key] /= s
 
     return counter
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
