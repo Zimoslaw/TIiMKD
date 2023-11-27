@@ -67,14 +67,14 @@ def entropy(file, text, entropy_type, level):
 
     if level == 0:
         if entropy_type == 'C':
-            print('Entropia znaków tekstu z pliku', file, '=', total)
+            print('Entropia znakow tekstu z pliku', file, '=', total)
         else:
-            print('Entropia słów tekstu z pliku', file, '=', total)
+            print('Entropia słow tekstu z pliku', file, '=', total)
     else:
         if entropy_type == 'C':
-            print('Entropia warunkowa znaków', level, 'rzędu tekstu z pliku', file, '=', total)
+            print('Entropia warunkowa znakow', level, 'rzedu tekstu z pliku', file, '=', total)
         else:
-            print('Entropia warunkowa słów', level, 'rzędu tekstu z pliku', file, '=', total)
+            print('Entropia warunkowa słow', level, 'rzedu tekstu z pliku', file, '=', total)
 
 # Prawdopdobieństwo każdego elemntu z zadanej tablicy
 def get_probability(array: list[str]):
