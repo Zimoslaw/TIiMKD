@@ -4,7 +4,9 @@ import math
 import time
 import sys
 
-
+# Uruchamianie:
+# python lzw.py [nazwa pliku] [ograniczenie długości słownika. 0 = brak ograniczenia]
+# np. python lzw.py lena.bmp 4096
 def main(argv):
     file = open(argv[0], "rb")
     content = file.read()
@@ -37,8 +39,8 @@ def main(argv):
     file2.write(lzw_decompressed)
     file2.close()
 
-    print(f'Współczynnik kompresji dla "{argv[0]}" (LZW): {len(content) / len(lzw_bin_compressed)} (czas: {lzw_bin_elapsed}s)')
-    print(f'Współczynnik kompresji dla "{argv[0]}" (LZW + Huffman): {len(content) / len(lzw_huff_compressed.to_bytes)} (czas: {lzw_huff_elapsed}s)')
+    print(f'Współczynnik kompresji dla "{argv[0]}" (LZW): {1 - (len(lzw_bin_compressed)) / len(content)} (czas: {lzw_bin_elapsed}s)')
+    print(f'Współczynnik kompresji dla "{argv[0]}" (LZW + Huffman): {1 - (len(lzw_huff_compressed.tobytes()) / len(content))} (czas: {lzw_huff_elapsed}s)')
 
 
 def compress_lzw(content, limit):
